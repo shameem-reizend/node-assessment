@@ -70,7 +70,7 @@ export const fetchAllProductHandler = async (req: Request, res: Response, next: 
 
         res.json({
             success: true,
-            message: "Product deleted successfully",
+            message: "Products fetched successfully",
             data: products
         })
     } catch (error) {
@@ -89,7 +89,7 @@ export const fetchOneProductHandler = async (req: Request, res: Response, next: 
 
         res.json({
             success: true,
-            message: "Product deleted successfully",
+            message: "Product fetched successfully",
             data: product
         })
     } catch (error) {

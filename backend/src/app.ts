@@ -4,9 +4,11 @@ import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.route";
 import purchaseRoutes from "./routes/purchaseEntries.routes";
 import salesRoutes from "./routes/sales.routes";
+import cors from 'cors'
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
+app.use(cors())
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript + Express");

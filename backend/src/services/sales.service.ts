@@ -7,3 +7,7 @@ export const createSales = async (salesData: Partial<Sales>) => {
     const purchase = salesRepo.create(salesData);
     return await salesRepo.save(purchase);
 }
+
+export const getAllSales = async () => {
+    return await salesRepo.find()
+}

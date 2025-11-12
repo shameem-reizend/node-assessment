@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/apiError";
 import { getProductById, updateProductStockById } from "../services/product.service";
-import { createSales } from "../services/sales.service";
+import { createSales, getAllSales } from "../services/sales.service";
 import { instanceToPlain } from "class-transformer";
 import { createBill } from "../services/bill.service";
 
@@ -20,22 +20,36 @@ export const makeSalesHandler = async (req: Request, res: Response, next: NextFu
         const sales = await createSales({product: updatedProduct, quantity, sales_price});
         const discount = sales.discount;
         const tax_percentage = product.tax_percentage;
-        console.log("tax:",tax_percentage, "dis",discount, "prod", product.price)
 
-        const tax_amount = (product.price + (product.price * tax_percentage));
-        console.log(tax_amount)
-        const total_amount = tax_amount + sales_price - discount;
+        const tax_amount = (Number(product.price) * Number(tax_percentage)) * Number(quantity);
+        const total_amount = Number(tax_amount) + Number(sales_price) - Number(discount);
 
         const bill = await createBill({sales, tax_amount, total_amount, discount})
 
         res.status(201).json({
             success: true,
-            message: "Product successfully created",
+            message: "Sales successfully created",
             data: {
                 bill
             }
         })
     } catch (error) {
         next(error)
+    }
+}
+
+export const fetchAllSalesHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const sales = await getAllSales();
+
+        res.status(201).json({
+            success: true,
+            message: "Sales successfully Fetched",
+            data: {
+                sales
+            }
+        })
+    } catch (error) {
+        next(error);
     }
 }
