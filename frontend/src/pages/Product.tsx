@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { fetchProductsAPI } from '../api/product';
 // import { MetricsCard } from '../components/MetricCard';
-import { ProductTable } from '../components/ProductTable';
+import { ProductTable } from '../components/products/ProductTable';
+import { AddProduct } from '../components/products/AddProduct';
 
 export interface Product{
   product_id: string,
@@ -29,13 +30,18 @@ export const Product: React.FC = () => {
 
   return (
     <div>
-      <h1 className='text-3xl font-semibold'>Products</h1>
+      <div className='flex justify-between w-full'>
+        <div>
+          <h1 className='text-3xl font-semibold'>Products</h1>
+        </div>
+          <AddProduct fetchProducts={fetchProducts}/>
+      </div>
       {/* <div className='grid grid-cols-5 mt-4'>
         <MetricsCard heading='Total Products' value={products.length} />
       </div> */}
 
        <div className="max-w-full mx-auto py-3 mt-4">
-          <ProductTable products={products}/>
+          <ProductTable products={products} fetchProducts={fetchProducts}/>
       </div>
     </div> 
   )

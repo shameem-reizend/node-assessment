@@ -5,10 +5,12 @@ import { Product } from './pages/Product';
 import { Purchase } from './pages/Purchase';
 import { Sales } from './pages/Sales';
 import { Layout } from './Layout';
+import {ToastContainer} from 'react-toastify'
 
 export const App: React.FC = () => {
   return (
     <>
+    <ToastContainer />
       <Router>
           <Routes>
             <Route
