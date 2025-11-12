@@ -11,7 +11,7 @@ export const makePurchaseHandler = async (req: Request, res: Response, next: Nex
         if(!product){
             throw new ApiError("product not found", 404);
         }
-        const total_stock = product.current_stock + quantity
+        const total_stock = product.current_stock + quantity;
         const updatedProduct = await updateProductStockById(product_id, total_stock);
 
         const purchase = await createPurchase({product: updatedProduct, quantity, purchase_price})

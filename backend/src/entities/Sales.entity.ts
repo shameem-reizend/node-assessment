@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "./Product.entity";
+import { Expose } from "class-transformer";
 
 @Entity()
 export class Sales {
@@ -20,9 +21,10 @@ export class Sales {
     @JoinColumn({name: 'product_id'})
     product: Product;
 
+    @Expose()
     public get discount(): number {
         if(this.sales_price < 1000){
-            return this.sales_price;
+            return 0;
         } else if(this.sales_price > 1000 && this.sales_price < 2000){
             return this.sales_price * 0.1;
         } else {

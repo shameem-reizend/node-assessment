@@ -19,7 +19,7 @@ export class Product {
     current_stock: number;
 
     @Column({type: 'decimal'})
-    tax_percentage: string;
+    tax_percentage: number;
 
     @CreateDateColumn()
     created_at: Date

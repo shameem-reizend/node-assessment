@@ -29,7 +29,7 @@ export const getAllProducts = async () => {
     return await productRepo.find();
 }
 
-export const updateProductStockById = async (product_id: string, total_stock: number) => {
-    await productRepo.update(product_id, {current_stock: total_stock})
+export const updateProductStockById = async (product_id: string, stock: number) => {
+    await productRepo.update(product_id, {current_stock: stock})
     return await getProductById(product_id)
 }
