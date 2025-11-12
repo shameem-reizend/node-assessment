@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { User } from "../entities/User.entity";
-import { Product } from "../entities/Product.Entity"
+import { Product } from "../entities/Product.entity"
+import { PurchaseEntries } from "../entities/PurchaseEntries.entity";
 
 
 export const AppDataSource = new DataSource({
@@ -16,5 +17,5 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: false,
 
-    entities: [User, Product],
+    entities: [User, Product, PurchaseEntries],
 });

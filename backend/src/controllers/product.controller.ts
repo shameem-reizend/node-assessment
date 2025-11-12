@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createProduct, getProductById, getProductBySku, updateProductById } from "../services/product.service";
+import { createProduct, deleteProductById, getAllProducts, getProductById, getProductBySku, updateProductById } from "../services/product.service";
 import { ApiError } from "../utils/apiError";
 
 export const addProductHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,6 +37,59 @@ export const updateProductHandler = async (req: Request, res: Response, next: Ne
         res.json({
             success: true,
             message: "Product updated successfully",
+            data: product
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const removeProductHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { productId } = req.params;
+
+        const findProduct = await getProductById(productId);
+        if(!findProduct) {
+            throw new ApiError('Product not found', 404);
+        }
+
+        await deleteProductById(productId);
+
+        res.json({
+            success: true,
+            message: "Product deleted successfully",
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const fetchAllProductHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const products = await getAllProducts();
+
+        res.json({
+            success: true,
+            message: "Product deleted successfully",
+            data: products
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const fetchOneProductHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { productId } = req.params;
+        
+        const product = await getProductById(productId);
+        if(!product) {
+            throw new ApiError('Product not found', 404);
+        }
+
+        res.json({
+            success: true,
+            message: "Product deleted successfully",
             data: product
         })
     } catch (error) {
