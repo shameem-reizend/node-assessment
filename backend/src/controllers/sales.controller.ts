@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { createEmptySales, getAllSales, updateSalesById } from "../services/sales.service";
+import { createEmptySales, getAllSales, getSaleyId, updateSalesById } from "../services/sales.service";
 import { ApiError } from "../utils/apiError";
 import { getProductById, updateProductStockById } from "../services/product.service";
-import { createSaleItem } from "../services/saleItem.service";
+import { createSaleItem, getSaleItemById } from "../services/saleItem.service";
 
 export const makeSalesHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -43,7 +43,11 @@ export const makeSalesHandler = async (req: Request, res: Response, next: NextFu
         const sales = await updateSalesById(sale.sale_id, {final_amount, discount, total_amount})
 
         res.json({
-            sale_item_arr
+            success: true,
+            message: "Sales successfully created",
+            data: {
+                sale_item_arr
+            }
         })
     } catch (error) {
         next(error)
@@ -63,5 +67,45 @@ export const fetchAllSalesHandler = async (req: Request, res: Response, next: Ne
         })
     } catch (error) {
         next(error);
+    }
+}
+
+export const fetchSaleItemBySaleIdHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {saleId} = req.params;
+        const saleItems = await getSaleItemById(saleId);
+        if(!saleItems){
+            throw new ApiError("saleitem not found ", 404)
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Sale items successfully Fetched",
+            data: {
+                saleItems
+            }
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const fetchSaleByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {saleId} = req.params;
+        const sale = await getSaleyId(saleId);
+        if(!sale){
+            throw new ApiError("saleitem not found ", 404)
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Sale details successfully Fetched",
+            data: {
+                sale
+            }
+        })
+    } catch (error) {
+        next(error)
     }
 }

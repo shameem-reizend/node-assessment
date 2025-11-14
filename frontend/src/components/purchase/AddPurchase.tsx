@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -10,26 +10,50 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { createPurchaseAPI } from "../../api/purchase"
 import { toast } from "react-toastify"
+import type { Product } from "../../pages/Product"
+import { fetchProductsAPI } from "../../api/product"
 
 
-export const AddPurchase: React.FC = () => {
+interface AddPurchasePropType{
+  fetchpurchase: () => void
+}
 
-    const[product, setProduct] = useState("");
+export const AddPurchase: React.FC<AddPurchasePropType> = ({fetchpurchase}) => {
+
+    const [products, setProducts] = useState<Product[]>([])
+    const [selectedProduct, setSelectedProduct] = useState<string>('')
     const[quantity, setQuantity] = useState(0);
-    const[price, setPrice] = useState(0);
 
     const [open, setOpen] = useState(false)
 
+    useEffect(() => {
+        fetchProductsAPI().then((data) => setProducts(data))
+      }, [])
+
+
+    const handleSelectChange = async (value: string) => {
+      setSelectedProduct(value)
+    }
     const handleSubmit = async () => {
-       const response = await createPurchaseAPI({product, price, quantity})
+       const response = await createPurchaseAPI({product_id: selectedProduct, quantity})
        console.log(response)
        if(response.success === true){
         toast.success('Product added');
-        
+        fetchpurchase();
+        setOpen(false)
        }
     }
 
@@ -48,17 +72,29 @@ export const AddPurchase: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="product">Product</Label>
-              <Input onChange={(e) => setProduct(e.target.value)} id="product" name="product" defaultValue="sugar" />
+            <div>
+              <Select onValueChange={handleSelectChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a Product" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Products</SelectLabel>
+                    {products.map((product) => (
+                      <SelectItem
+                        key={product.product_id}
+                        value={product.product_id}
+                      >
+                        {product.sku} - {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-3">
               <Label htmlFor="quantity">Quantity</Label>
-              <Input onChange={(e) => setQuantity(Number(e.target.value))} id="quantity" name="quantity" defaultValue="30" />
-            </div>
-             <div className="grid gap-3">
-              <Label htmlFor="price">Price</Label>
-              <Input onChange={(e) => setPrice(Number(e.target.value))} id="price" name="price" defaultValue="200" />
+              <Input onChange={(e) => setQuantity(Number(e.target.value))} id="quantity" name="quantity" />
             </div>
           </div>
           <DialogFooter>

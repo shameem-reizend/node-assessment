@@ -26,7 +26,7 @@ import { fetchProductByIdAPI, fetchProductsAPI } from "../../api/product"
 import type { Product } from "../../pages/Product"
 import { createSalesAPI } from "../../api/sale"
 
-interface itemType {
+export interface itemType {
   product_id: string
   quantity: number
 }
@@ -35,7 +35,11 @@ interface SalePayload {
   items: itemType[]
 }
 
-export const AddSale: React.FC = () => {
+interface SalePropType {
+    fetchSales: () => void
+}
+
+export const AddSale: React.FC<SalePropType> = ({fetchSales}) => {
   const [quantity, setQuantity] = useState(0)
   const [open, setOpen] = useState(false)
 
@@ -74,8 +78,15 @@ export const AddSale: React.FC = () => {
 
   const handleSubmit = async () => {
    try {
-        const response = await createSalesAPI({saleData.items});
-        if(response.success) 
+        const response = await createSalesAPI(saleData.items);
+        console.log(response)
+        if(response.success == true) {
+            toast.success('sale successfully created');
+            setOpen(false);
+            fetchSales();
+        } else{
+            toast.error('Something went wrong')
+        }
     } catch (error) {
         console.log(error)
     }

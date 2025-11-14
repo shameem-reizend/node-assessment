@@ -17,6 +17,11 @@ export const getAllSales = async () => {
     return await salesRepo.find()
 }
 
+export const getSaleyId = async (sale_id: string) => {
+    return await salesRepo.findOneBy({sale_id})
+}
+
+
 export const updateSalesById = async (sale_id: string, saleData: Partial<Sale>) => {
     return await salesRepo.update({sale_id}, saleData);
 }

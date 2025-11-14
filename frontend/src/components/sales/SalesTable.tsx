@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Sale } from '../../pages/Sales';
+import { SaleDetail } from './SaleDetail';
 
 interface SalePropType {
     sales: Sale[];
@@ -72,7 +73,7 @@ const SalesTable: React.FC<SalePropType> = ({sales}) => {
                     </td> 
                     <td className="hidden lg:table-cell p-4 border-b border-blue-gray-50 cursor-pointer">
                         <div className=''>
-                            <button className='bg-orange text-white rounded-lg px-6 py-2 cursor-pointer'>View Detail</button>
+                            <SaleDetail sale_id={sale.sale_id}/>
                         </div>
                     </td> 
                 </tr>

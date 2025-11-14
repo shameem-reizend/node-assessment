@@ -7,3 +7,7 @@ export const createPurchase = async (purchaseData: Partial<PurchaseEntries>) => 
     const purchase = purchaseRepo.create(purchaseData);
     return await purchaseRepo.save(purchase);
 }
+
+export const getAllPurchase = async () => {
+    return await purchaseRepo.find({relations: ['product']});
+}

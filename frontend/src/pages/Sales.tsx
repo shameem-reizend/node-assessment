@@ -35,7 +35,7 @@ export const Sales: React.FC = () => {
         <div>
           <h1 className='text-3xl font-semibold'>Sales</h1>
         </div>
-          <AddSale/>
+          <AddSale fetchSales={fetchSales}/>
       </div>
       <div className="max-w-full mx-auto py-3 mt-4">
           <SalesTable sales={sales} fetchSales={fetchSales}/>
