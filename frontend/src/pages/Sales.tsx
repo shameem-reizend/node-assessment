@@ -8,12 +8,12 @@ export interface Sale{
   total_amount: number;
   final_amount: number;
   discount: number;
-  created_at: number;
+  created_at: string;
 }
 
 export const Sales: React.FC = () => {
 
-  const[sales, setSales] = useState([])
+  const[sales, setSales] = useState<Sale[]>([])
 
   const fetchSales = async () => {
     try{

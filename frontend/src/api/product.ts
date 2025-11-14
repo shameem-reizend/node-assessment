@@ -7,6 +7,11 @@ export const fetchProductsAPI = async () => {
     return response.data.data;
 }
 
+export const fetchProductByIdAPI = async (productId: string) => {
+    const response = await axios.get(`${baseURl}/product/${productId}`);
+    return response.data.data;
+}
+
 export const createProductAPI = async (formData: object) => {
     const response = await axios.post(`${baseURl}/product`, formData);
     return response.data;

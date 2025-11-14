@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -12,60 +12,153 @@ import {
 } from "../ui/dialog"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { createPurchaseAPI } from "../../api/purchase"
 import { toast } from "react-toastify"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select"
+import { fetchProductByIdAPI, fetchProductsAPI } from "../../api/product"
+import type { Product } from "../../pages/Product"
+import { createSalesAPI } from "../../api/sale"
 
+interface itemType {
+  product_id: string
+  quantity: number
+}
+
+interface SalePayload {
+  items: itemType[]
+}
 
 export const AddSale: React.FC = () => {
+  const [quantity, setQuantity] = useState(0)
+  const [open, setOpen] = useState(false)
 
-    const[product, setProduct] = useState("");
-    const[quantity, setQuantity] = useState(0);
-    const[price, setPrice] = useState(0);
+  const [products, setProducts] = useState<Product[]>([])
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
-    const [open, setOpen] = useState(false)
+  const [saleData, setSaleData] = useState<SalePayload>({
+    items: [],
+  })
 
-    const handleSubmit = async () => {
-       const response = await createPurchaseAPI({product, price, quantity})
-       console.log(response)
-       if(response.success === true){
-        toast.success('Product added');
-        
-       }
+  useEffect(() => {
+    fetchProductsAPI().then((data) => setProducts(data))
+  }, [])
+
+  const handleSelectChange = async (value: string) => {
+    const product = await fetchProductByIdAPI(value)
+    setSelectedProduct(product)
+  }
+
+  const addproduct = () => {
+    if (!selectedProduct) {
+      toast.error("Select a product first")
+      return
     }
+
+    const newItem = {
+      product_id: selectedProduct.product_id,
+      quantity,
+    }
+
+    setSaleData((prev) => ({
+      items: [...prev.items, newItem],
+    }))
+  }
+
+
+  const handleSubmit = async () => {
+   try {
+        const response = await createSalesAPI({saleData.items});
+        if(response.success) 
+    } catch (error) {
+        console.log(error)
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
-          <button onClick={() => setOpen(true)} className='bg-orange text-white rounded-lg px-6 py-2 cursor-pointer'>Add Sale</button>
+          <button
+            onClick={() => setOpen(true)}
+            className="bg-orange text-white rounded-lg px-6 py-2 cursor-pointer"
+          >
+            Add Sale
+          </button>
         </DialogTrigger>
+
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Create Sale</DialogTitle>
             <DialogDescription>
-              Add your new product in stock Click save when you&apos;re
-              done.
+              Add your new Sale. Click save when you’re done.
             </DialogDescription>
           </DialogHeader>
+
           <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="product">Product</Label>
-              <Input onChange={(e) => setProduct(e.target.value)} id="product" name="product" defaultValue="sugar" />
+            <div>
+              <Select onValueChange={handleSelectChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a Product" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Products</SelectLabel>
+                    {products.map((product) => (
+                      <SelectItem
+                        key={product.product_id}
+                        value={product.product_id}
+                      >
+                        {product.sku} - {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
+
             <div className="grid gap-3">
               <Label htmlFor="quantity">Quantity</Label>
-              <Input onChange={(e) => setQuantity(Number(e.target.value))} id="quantity" name="quantity" defaultValue="30" />
+              <Input
+                id="quantity"
+                name="quantity"
+                onChange={(e) => setQuantity(Number(e.target.value))}
+              />
             </div>
-             <div className="grid gap-3">
-              <Label htmlFor="price">Price</Label>
-              <Input onChange={(e) => setPrice(Number(e.target.value))} id="price" name="price" defaultValue="200" />
-            </div>
+
+            {/* Display items */}
+            {saleData.items.map((i) => (
+              <div key={i.product_id}>
+                {i.product_id} — {i.quantity}
+              </div>
+            ))}
           </div>
+
+          <button
+            type="button"
+            className="bg-orange text-white w-1/3 rounded-xl px-3 py-2"
+            onClick={addproduct}
+          >
+            Add Product
+          </button>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" onClick={handleSubmit} className="text-white">Save changes</Button>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              className="text-white"
+            >
+              Save changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>
